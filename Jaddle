@@ -1,0 +1,263 @@
+package Jaddle;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+public class Jaddle {
+
+    private static final int MAX_LIVES = 5;
+    private static int currentLives = MAX_LIVES;
+    
+    private static int points = 0;
+    private static int levelPoints = 0; // Track points specific to the current level
+    private static final int POINTS_PER_CORRECT_ANSWER = 10;
+    private static final int POINTS_DEDUCT_WRONG_ANSWER = 5;
+    private static final int LEVEL_POINTS_DEDUCT_WRONG_ANSWER = 5;
+    
+    // Level Points Requirments
+    private static final int LEVEL_2_UNLOCK_POINTS = 30;
+    private static final int LEVEL_3_UNLOCK_POINTS = 30;
+    private static final int LEVEL_4_UNLOCK_POINTS = 40;
+    private static final int LEVEL_5_UNLOCK_POINTS = 40;
+
+    private static int currentLevel = 1; // Track the player's current level
+    
+   // List of Riddle Questions
+    public static void main(String[] args) {
+        ArrayList<Riddle> LVL1 = new ArrayList<>();
+        ArrayList<Riddle> LVL2 = new ArrayList<>();
+        ArrayList<Riddle> LVL3 = new ArrayList<>();
+        ArrayList<Riddle> LVL4 = new ArrayList<>();
+        ArrayList<Riddle> LVL5 = new ArrayList<>();
+        Scanner scan = new Scanner(System.in);
+
+        // Level 1 Riddles
+        LVL1.add(new Riddle("Dalawang balon, hindi malingon", "Ears,ears,Ear,ear,Tenga,tenga,Tainga,tainga"));
+        LVL1.add(new Riddle("Ako ay may kaibigan, kasama ko kahit saan.", "Shadow,shadow,Anino,anino"));
+        LVL1.add(new Riddle("Buto't balat, Lumilipad. Ano ako?", "Kite,kite,Sarangola,saranggola,Saranggola,saranggola"));
+        LVL1.add(new Riddle("Isang prinsesa, nakaupo sa tasa.", "Kasoy,kasoy,Cashew,cashew"));
+        LVL1.add(new Riddle("Kung kailan mo pinatay, saka pa humaba ang buhay.", "Candle,candle,Kandila,kandila"));
+        LVL1.add(new Riddle("Hindi tao, hindi hayop, ngunit lumuluha.", "Gripo,gripo,faucet,Faucet")); 
+     
+        // Level 2 Riddles
+        LVL2.add(new Riddle("Dalawang balon, hindi malingon", "Ears,ears,Ear,ear,Tenga,tenga,Tainga,tainga"));
+        LVL2.add(new Riddle("Ako ay may kaibigan, kasama ko kahit saan.", "Shadow,shadow,Anino,anino"));
+        LVL2.add(new Riddle("Buto't balat, Lumilipad. Ano ako?", "Kite,kite,Sarangola,saranggola,Saranggola,saranggola"));
+        LVL2.add(new Riddle("Isang prinsesa, nakaupo sa tasa.", "Kasoy,kasoy"));
+        LVL2.add(new Riddle("Kung kailan mo pinatay, saka pa humaba ang buhay.", "Candle,candle,Kandila,kandila"));
+        LVL2.add(new Riddle("Hindi tao, hindi hayop, ngunit lumuluha.", "Gripo,gripo")); 
+        
+        // Level 3 Riddles
+        LVL3.add(new Riddle("Dalawang balon, hindi malingon", "Ears,ears,Ear,ear,Tenga,tenga,Tainga,tainga"));
+        LVL3.add(new Riddle("Ako ay may kaibigan, kasama ko kahit saan.", "Shadow,shadow,Anino,anino"));
+        LVL3.add(new Riddle("Buto't balat, Lumilipad. Ano ako?", "Kite,kite,Sarangola,saranggola,Saranggola,saranggola"));
+        LVL3.add(new Riddle("Isang prinsesa, nakaupo sa tasa.", "Kasoy,kasoy"));
+        LVL3.add(new Riddle("Kung kailan mo pinatay, saka pa humaba ang buhay.", "Candle,candle,Kandila,kandila"));
+        LVL3.add(new Riddle("Hindi tao, hindi hayop, ngunit lumuluha.", "Gripo,gripo")); 
+        
+        // Level 4 Riddles
+        LVL4.add(new Riddle("Dalawang balon, hindi malingon", "Ears,ears,Ear,ear,Tenga,tenga,Tainga,tainga"));
+        LVL4.add(new Riddle("Ako ay may kaibigan, kasama ko kahit saan.", "Shadow,shadow,Anino,anino"));
+        LVL4.add(new Riddle("Buto't balat, Lumilipad. Ano ako?", "Kite,kite,Sarangola,saranggola,Saranggola,saranggola"));
+        LVL4.add(new Riddle("Isang prinsesa, nakaupo sa tasa.", "Kasoy,kasoy"));
+        LVL4.add(new Riddle("Kung kailan mo pinatay, saka pa humaba ang buhay.", "Candle,candle,Kandila,kandila"));
+        LVL4.add(new Riddle("Hindi tao, hindi hayop, ngunit lumuluha.", "Gripo,gripo")); 
+        
+        // Level 5 Riddles
+        LVL5.add(new Riddle("Dalawang balon, hindi malingon", "Ears,ears,Ear,ear,Tenga,tenga,Tainga,tainga"));
+        LVL5.add(new Riddle("Ako ay may kaibigan, kasama ko kahit saan.", "Shadow,shadow,Anino,anino"));
+        LVL5.add(new Riddle("Buto't balat, Lumilipad. Ano ako?", "Kite,kite,Sarangola,saranggola,Saranggola,saranggola"));
+        LVL5.add(new Riddle("Isang prinsesa, nakaupo sa tasa.", "Kasoy,kasoy"));
+        LVL5.add(new Riddle("Kung kailan mo pinatay, saka pa humaba ang buhay.", "Candle,candle,Kandila,kandila"));
+        LVL5.add(new Riddle("Hindi tao, hindi hayop, ngunit lumuluha.", "Gripo,gripo")); 
+
+        // Load progress if available
+        loadProgress();
+
+        // Main game loop
+         while (true) {
+            System.out.println("Current Level: " + currentLevel + ", Total Points: " + points + ", Lives: " + currentLives);
+            System.out.println("Choose an option:");
+            System.out.println("1. Play Level 1");
+            if (currentLevel >= 2) {
+                System.out.println("2. Play Level 2");
+            }
+            if (currentLevel >= 3) {
+                System.out.println("3. Play Level 3");
+            }
+            if (currentLevel >= 4) {
+                System.out.println("4. Play Level 4");
+            }
+            if (currentLevel >= 5) {
+                System.out.println("5. Play Level 5");
+            }
+            System.out.println("6. Exit");
+
+            String choice = scan.nextLine();
+
+            if (choice.equals("1")) {
+                System.out.println("***** WELCOME TO LEVEL 1 *****");
+                playLevel(scan, LVL1);
+                if (levelPoints >= LEVEL_2_UNLOCK_POINTS && currentLevel == 1) {
+                    currentLevel = 2;
+                    System.out.println("Congratulations! You've unlocked Level 2.");
+                    saveProgress();
+                }
+            } else if (choice.equals("2") && currentLevel >= 2) {
+                System.out.println("***** WELCOME TO LEVEL 2 *****");
+                playLevel(scan, LVL2);
+                if (levelPoints >= LEVEL_3_UNLOCK_POINTS && currentLevel == 2) {
+                    currentLevel = 3;
+                    System.out.println("Congratulations! You've unlocked Level 3.");
+                    saveProgress();
+                }
+            } else if (choice.equals("3") && currentLevel >= 3) {
+                System.out.println("***** WELCOME TO LEVEL 3 *****");
+                playLevel(scan, LVL3);
+                if (levelPoints >= LEVEL_4_UNLOCK_POINTS && currentLevel == 3) {
+                    currentLevel = 4;
+                    System.out.println("Congratulations! You've unlocked Level 4.");
+                    saveProgress();
+                }
+            } else if (choice.equals("4") && currentLevel >= 4) {
+                System.out.println("***** WELCOME TO LEVEL 4 *****");
+                playLevel(scan, LVL4);
+                if (levelPoints >= LEVEL_5_UNLOCK_POINTS && currentLevel == 4) {
+                    currentLevel = 5;
+                    System.out.println("Congratulations! You've unlocked Level 5.");
+                    saveProgress();
+                }
+            } else if (choice.equals("5") && currentLevel >= 5) {
+                System.out.println("***** WELCOME TO LEVEL 5 *****");
+                playLevel(scan, LVL5);
+                // Level 5 does not unlock any further levels
+            } else if (choice.equals("6")) {
+                System.out.println("Exiting the game. Goodbye!");
+                break;
+            } else {
+                System.out.println("Invalid option. Please try again.");
+            }
+        }
+        scan.close(); // Close the scanner to prevent resource leaks
+    
+    }
+
+    // Method to play a level
+    private static void playLevel(Scanner scan, ArrayList<Riddle> riddles) {
+        levelPoints = 0; // Reset level points at the start of the level
+        for (Riddle riddle : riddles) {
+            if (currentLives == 0) {
+                System.out.println("You have lost all lives! Please wait a moment before restarting the level...");
+                waitForRestart();
+                resetLevel(); // Reset level points and lives
+                return;
+            }
+
+            System.out.println("Lives: " + currentLives + " | Level Points: " + levelPoints);
+            System.out.println(riddle.getRiddle());
+            String userAnswer = scan.nextLine();
+
+            if (riddle.checkAnswer(userAnswer)) {
+                System.out.println("Correct! +10 Points");
+                levelPoints += POINTS_PER_CORRECT_ANSWER;
+                points += POINTS_PER_CORRECT_ANSWER;
+            } else {
+                System.out.println("Wrong! -5 Points");
+                levelPoints = Math.max(0, levelPoints - POINTS_DEDUCT_WRONG_ANSWER); // Prevent levelPoints from going negative
+                points = Math.max(0, points - POINTS_DEDUCT_WRONG_ANSWER); // Prevent points from going negative
+                loseLife();
+            }
+
+            System.out.println();
+        }
+        
+         if (levelPoints < LEVEL_2_UNLOCK_POINTS && currentLevel == 1) {
+        System.out.println("You failed to reach Level point requirements, please try again.");
+    } else if (levelPoints < LEVEL_3_UNLOCK_POINTS && currentLevel == 2) {
+        System.out.println("You failed to reach Level point requirements, please try again.");
+    } else if (levelPoints < LEVEL_4_UNLOCK_POINTS && currentLevel == 3) {
+        System.out.println("You failed to reach Level point requirements, please try again.");
+    } else if (levelPoints < LEVEL_5_UNLOCK_POINTS && currentLevel == 4) {
+        System.out.println("You failed to reach Level point requirements, please try again.");
+    }   
+       saveProgress(); // Save progress after completing the level
+    }
+
+    // Reset level points and lives when all lives are lost
+    private static void resetLevel() {
+        levelPoints = 0; // Reset level-specific points
+        currentLives = MAX_LIVES; // Reset lives
+        System.out.println("All points for this level have been reset. Try again from the beginning.");
+    }
+
+    // Method to handle losing a life
+    private static void loseLife() {
+        currentLives--;
+        System.out.println("You lost a life! Remaining lives: " + currentLives);
+    }
+
+    // Method to wait before restarting the level
+    private static void waitForRestart() {
+        System.out.println("Waiting for 10 seconds before you can restart...");
+        try {
+            Thread.sleep(10000); // Wait for 10 seconds
+        } catch (InterruptedException e) {
+            System.out.println("An error occurred while waiting: " + e.getMessage());
+        }
+    }
+
+    // Method to save progress to a file
+    private static void saveProgress() {
+        try (PrintWriter writer = new PrintWriter("progress.txt")) {
+            writer.println(currentLevel);
+            writer.println(points);
+            writer.println(currentLives);
+            writer.println(levelPoints); // Save level-specific points
+            System.out.println("Progress saved!");
+        } catch (IOException e) {
+            System.out.println("Error saving progress: " + e.getMessage());
+        }
+    }
+
+    // Method to load progress from a file
+    private static void loadProgress() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("progress.txt"))) {
+            currentLevel = Integer.parseInt(reader.readLine());
+            points = Integer.parseInt(reader.readLine());
+            currentLives = Integer.parseInt(reader.readLine());
+            levelPoints = Integer.parseInt(reader.readLine()); // Load level-specific points
+            System.out.println("Progress loaded! Current Level: " + currentLevel + ", Points: " + points + ", Lives: " + currentLives + ", Level Points: " + levelPoints);
+        } catch (FileNotFoundException e) {
+            System.out.println("No saved progress found. Starting fresh.");
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error loading progress: " + e.getMessage());
+        }
+    }
+}
+
+// Riddle class with multiple answers split from a single string
+class Riddle {
+    private String riddle;
+    private List<String> answers; // Store multiple correct answers
+
+    public Riddle(String riddle, String answersString) {
+        this.riddle = riddle;
+        this.answers = Arrays.asList(answersString.split(","));
+    }
+
+    public String getRiddle() {
+        return riddle;
+    }
+
+    public boolean checkAnswer(String userAnswer) {
+        for (String answer : answers) {
+            if (answer.equalsIgnoreCase(userAnswer.trim())) {
+                return true;
+            }
+        }
+        return false;   
+    }
+}
